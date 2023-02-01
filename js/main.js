@@ -4,3 +4,37 @@ let app = new Vue({
 
     }
 })
+
+Vue.component('Notes', {
+    templates: `
+    `,
+    data(){
+        return {
+
+        }
+    },
+    methods:{
+
+    },
+    props: {
+
+    }
+})
+
+
+
+Vue.component('Notes-add', {
+    templates: `
+    `,
+    data() {
+        return {
+
+        }
+    },
+    methods: {
+
+    },
+    props: {
+
+    }
+})
