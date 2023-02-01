@@ -10,13 +10,14 @@ Vue.component('Notes', {
     <div class="Notes">
         <div class="all-notes">
             <div class="note-one">
-            
+                <h1>First column</h1>
+                
             </div>
             <div class="note-two">
-            
+                <h1>Second column</h1>
             </div>
             <div  class="note-three">
-            
+                <h1>Third column</h1>
             </div>
         </div>
         <div class="note-add">
@@ -69,30 +70,30 @@ Vue.component('Notes-add', {
     templates: `
     <form class="note-form" @submit.prevent="onSubmit">
         <p class="name-column>
-            <label>Name of the note</label>
-            <input id="name" placeholder="Text">
+            <label for="name">Name of the note</label>
+            <input id="name" v-model="name" placeholder="Text">
         </p>
         <p class="name-column">
-            <label>Your first note</label>
-            <input id="noteOne">
+            <label for="noteOne">Your first note</label>
+            <input id="noteOne" v-model="noteOne" placeholder="Text of the first note">
         </p>
-        <p>
-            <label>Your second note</label>
-            <input id="noteTwo">
+        <p class="name-column">
+            <label for="noteTwo">Your second note</label>
+            <input id="noteTwo" v-model="noteTwo" placeholder="Text of the second note">
         </p>
-        <p>
-            <label>Your third note</label>
-            <input id="noteThree">
+        <p class="name-column">
+            <label for="noteThree">Your third note</label>
+            <input id="noteThree" v-model="noteThree" placeholder="Text of the third note">
         </p>
-        <p>
-            <label for="#">Your fourth note</label>
-            <input id="noteFore">
+        <p class="name-column">
+            <label for="noteFore">Your fourth note</label>
+            <input id="noteFore" v-model="noteFore" placeholder="Text of the fourth note">
         </p>
-        <p>
-            <label for="#">Your fifth note</label>
-            <input id="noteFife">
+        <p class="name-column">
+            <label for="noteFife">Your fifth note</label>
+            <input id="noteFife" v-model="noteFife" placeholder="Text of the fifth note">
         </p>
-        <input type="submit" value="Submit">
+        <input class="btn" type="submit" value="Submit">
     </form>
     `,
     data() {
