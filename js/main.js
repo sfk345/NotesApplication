@@ -42,6 +42,15 @@ Vue.component('Notes', {
 
 Vue.component('Notes-tab', {
     templates: `
+    <div>
+        <ul>
+            <span class="tab"
+            :class="{activeTab: selectedtab === tab}"
+            @click="selectedTab = tab">
+            {{tab}}
+            </span>
+        </ul>
+    </div>
     `,
     data() {
         return {
@@ -59,9 +68,29 @@ Vue.component('Notes-tab', {
 Vue.component('Notes-add', {
     templates: `
     <form class="note-form" @submit.prevent="onSubmit">
+        <p class="name-column>
+            <label>Name of the note</label>
+            <input id="name" placeholder="Text">
+        </p>
         <p class="name-column">
             <label>Your first note</label>
             <input id="noteOne">
+        </p>
+        <p>
+            <label>Your second note</label>
+            <input id="noteTwo">
+        </p>
+        <p>
+            <label>Your third note</label>
+            <input id="noteThree">
+        </p>
+        <p>
+            <label for="#">Your fourth note</label>
+            <input id="noteFore">
+        </p>
+        <p>
+            <label for="#">Your fifth note</label>
+            <input id="noteFife">
         </p>
         <input type="submit" value="Submit">
     </form>
