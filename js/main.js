@@ -98,11 +98,27 @@ Vue.component('Notes-add', {
     `,
     data() {
         return {
-
+            name: null,
+            noteOne: null,
+            noteTwo: null,
+            noteThree: null,
+            noteFore: null,
+            noteFife: null,
         }
     },
     methods: {
-
+        onSubmit(){
+            let noteCard = {
+                name: this.name,
+                noteOne: this.noteOne,
+                noteTwo: this.noteTwo,
+                noteThree: this.noteThree,
+                noteFore: this.noteFore,
+                noteFife: this.noteFife,
+            }
+            this.$emit('note-submitted', noteCard)
+            this.name = null
+        }
     },
     props: {
 
