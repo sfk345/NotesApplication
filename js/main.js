@@ -7,6 +7,14 @@ let app = new Vue({
 
 Vue.component('Notes', {
     templates: `
+    <div class="Notes">
+        <div class="note-one">
+        </div>
+        <div class="note-two">
+        </div>
+        <div  class="note-three">
+        </div>
+    </div>
     `,
     data(){
         return {
@@ -18,10 +26,27 @@ Vue.component('Notes', {
     },
     props: {
 
+    },
+    mounted(){
+
     }
 })
 
+Vue.component('Notes-tab', {
+    templates: `
+    `,
+    data() {
+        return {
 
+        }
+    },
+    methods: {
+
+    },
+    props: {
+
+    }
+})
 
 Vue.component('Notes-add', {
     templates: `
