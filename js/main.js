@@ -40,66 +40,82 @@ Vue.component('Notes', {
 
     },
     props: {
-
-    },
-    mounted(){
-
-    }
-})
-
-Vue.component('Notes-tab', {
-    templates: `
-    <div>
-        <ul>
-            <span class="tab"
-            :class="{activeTab: selectedtab === tab}"
-            @click="selectedTab = tab">
-            {{tab}}
-            </span>
-        </ul>
-    </div>
-    `,
-    data() {
-        return {
-
+        noteCard: {
+            title: {
+                type: Text,
+                required: true
+            },
+            tasks: {
+                type: Array,
+                required: true
+            }
         }
     },
-    methods: {
-
-    },
-    props: {
-
+    mounted(){
+        eventBus.$on('Notes', noteCard => {
+            if(this.noteOne.length < 3){
+                this.noteOne.push(noteCard)
+                console.log(this.noteOne)
+            }
+        })
     }
 })
+
+// Vue.component('Notes-tab', {
+//     templates: `
+//     <div>
+//         <ul>
+//             <span class="tab"
+//             :class="{activeTab: selectedtab === tab}"
+//             @click="selectedTab = tab">
+//             {{tab}}
+//             </span>
+//         </ul>
+//     </div>
+//     `,
+//     data() {
+//         return {
+//
+//         }
+//     },
+//     methods: {
+//
+//     },
+//     props: {
+//
+//     }
+// })
 
 Vue.component('Notes-add', {
     templates: `
     <form class="note-form" @submit.prevent="onSubmit">
         <p class="name-column>
             <label for="name">Name of the note</label>
-            <input id="name" v-model="name" placeholder="Text">
+            <input id="name" v-model="name" maxlength="50" placeholder="Text">
         </p>
         <p class="name-column">
             <label for="noteOne">Your first note</label>
-            <input id="noteOne" v-model="noteOne" placeholder="Text of the first note">
+            <input id="noteOne" v-model="noteOne" maxlength="50" placeholder="Text of the first note">
         </p>
         <p class="name-column">
             <label for="noteTwo">Your second note</label>
-            <input id="noteTwo" v-model="noteTwo" placeholder="Text of the second note">
+            <input id="noteTwo" v-model="noteTwo" maxlength="50" placeholder="Text of the second note">
         </p>
         <p class="name-column">
             <label for="noteThree">Your third note</label>
-            <input id="noteThree" v-model="noteThree" placeholder="Text of the third note">
+            <input id="noteThree" v-model="noteThree" maxlength="50" placeholder="Text of the third note">
         </p>
         <p class="name-column">
             <label for="noteFore">Your fourth note</label>
-            <input id="noteFore" v-model="noteFore" placeholder="Text of the fourth note">
+            <input id="noteFore" v-model="noteFore" maxlength="50" placeholder="Text of the fourth note">
         </p>
         <p class="name-column">
             <label for="noteFife">Your fifth note</label>
-            <input id="noteFife" v-model="noteFife" placeholder="Text of the fifth note">
+            <input id="noteFife" v-model="noteFife" maxlength="50" placeholder="Text of the fifth note">
         </p>
-        <input class="btn" type="submit" value="Submit">
+        <p class="name-column">
+            <input class="btn" type="submit" value="Add">
+        </p>
     </form>
     `,
     data() {
@@ -116,11 +132,14 @@ Vue.component('Notes-add', {
         onSubmit(){
             let noteCard = {
                 name: this.name,
-                noteOne: this.noteOne,
-                noteTwo: this.noteTwo,
-                noteThree: this.noteThree,
-                noteFore: this.noteFore,
-                noteFife: this.noteFife,
+                tasks: [{text: this.noteOne, completed: false},
+                    {text: this.noteTwo, completed: false},
+                    {text: this.noteThree, completed: false},
+                    {text: this.noteFore, completed: false},
+                    {text: this.noteFife, completed: false},
+                ],
+                date: null,
+                status: 0
             }
             this.$emit('note-submitted', noteCard)
             this.name = null
