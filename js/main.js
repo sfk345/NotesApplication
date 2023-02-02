@@ -13,7 +13,7 @@ Vue.component('Notes', {
         <div class="all-notes">
             <div class="note-one">
                 <h1>First column</h1>
-                
+                <column class="one" :notesOne="notesOne"></column>
             </div>
             <div class="note-two">
                 <h1>Second column</h1>
@@ -32,8 +32,9 @@ Vue.component('Notes', {
             noteOne: [],
             noteTwo: [],
             noteThree: [],
-            noteFore: [],
-            noteFife: []
+            // noteFore: [],
+            // noteFife: [],
+            errors: []
         }
     },
     methods:{
@@ -56,6 +57,8 @@ Vue.component('Notes', {
             if(this.noteOne.length < 3){
                 this.noteOne.push(noteCard)
                 console.log(this.noteOne)
+            } else {
+                this.errors.push("The quantity noticeably exceeds the permissible norms")
             }
         })
     }
@@ -126,6 +129,7 @@ Vue.component('Notes-add', {
             noteThree: null,
             noteFore: null,
             noteFife: null,
+            errors: [],
         }
     },
     methods: {
@@ -141,7 +145,7 @@ Vue.component('Notes-add', {
                 date: null,
                 status: 0
             }
-            this.$emit('note-submitted', noteCard)
+            eventBus.$emit('note-submitted', noteCard)
             this.name = null
             this.noteOne = null
             this.noteTwo = null
@@ -152,6 +156,9 @@ Vue.component('Notes-add', {
         }
     },
     props: {
-
+        noteOne: {
+            type: Array,
+            required: false
+        }
     }
 })
