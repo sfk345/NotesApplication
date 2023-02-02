@@ -1,3 +1,5 @@
+let eventBus = new Vue()
+
 let app = new Vue({
     el: '#app',
     data:{
@@ -27,7 +29,11 @@ Vue.component('Notes', {
     `,
     data(){
         return {
-
+            noteOne: [],
+            noteTwo: [],
+            noteThree: [],
+            noteFore: [],
+            noteFife: []
         }
     },
     methods:{
@@ -118,6 +124,12 @@ Vue.component('Notes-add', {
             }
             this.$emit('note-submitted', noteCard)
             this.name = null
+            this.noteOne = null
+            this.noteTwo = null
+            this.noteThree = null
+            this.noteFore = null
+            this.noteFife = null
+            console.log(noteCard)
         }
     },
     props: {
