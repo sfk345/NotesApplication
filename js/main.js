@@ -39,12 +39,24 @@ Vue.component('note', {
             },
             tasks: {
                 type: Array,
+                required: true,
+                completed: {
+                    type: Boolean,
+                    required: true
+                }
+            },
+            date: {
+                type: Date,
+                required: false
+            },
+            status: {
+                type: Number,
                 required: true
             }
         }
     },
     mounted(){
-        eventBus.$on('note', noteCard => {
+        eventBus.$on('note-submitted', noteCard => {
             this.errors = []
             if (this.noteOne.length < 3){
                 this.noteOne.push(noteCard)
@@ -58,23 +70,24 @@ Vue.component('note', {
 
 Vue.component('note-add', {
     template: `
-    <h1>Hello world</h1>
+<div>
+    <h1>New add</h1>
     <form class="note-form" @submit.prevent="onSubmit">
-        <p class="name-column>
+        <p class="name-column">
             <label for="name">Name of the note</label>
-            <input id="name" v-model="name" maxlength="50" placeholder="Text">
+            <input id="name" v-model="name" maxlength="50" type="text" placeholder="Text">
         </p>
         <p class="name-column">
             <label for="noteOne">Your first note</label>
-            <input id="noteOne" v-model="noteOne" maxlength="50" placeholder="Text of the first note">
+            <input required id="noteOne" v-model="noteOne" maxlength="50" placeholder="Text of the first note">
         </p>
         <p class="name-column">
             <label for="noteTwo">Your second note</label>
-            <input id="noteTwo" v-model="noteTwo" maxlength="50" placeholder="Text of the second note">
+            <input required id="noteTwo" v-model="noteTwo" maxlength="50" placeholder="Text of the second note">
         </p>
         <p class="name-column">
             <label for="noteThree">Your third note</label>
-            <input id="noteThree" v-model="noteThree" maxlength="50" placeholder="Text of the third note">
+            <input required id="noteThree" v-model="noteThree" maxlength="50" placeholder="Text of the third note">
         </p>
         <p class="name-column">
             <label for="noteFore">Your fourth note</label>
@@ -88,6 +101,7 @@ Vue.component('note-add', {
             <input class="btn" type="submit" value="Add">
         </p>
     </form>
+</div>
     `,
     data(){
         return{
@@ -98,7 +112,9 @@ Vue.component('note-add', {
             noteFore: null,
             noteFife: null,
             errors: [],
+
         }
+
     },
     methods: {
         onSubmit(){
@@ -108,8 +124,7 @@ Vue.component('note-add', {
                     {text: this.noteTwo, completed: false},
                     {text: this.noteThree, completed: false},
                     {text: this.noteFore, completed: false},
-                    {text: this.noteFife, completed: false},
-                ],
+                    {text: this.noteFife, completed: false}],
                 date: null,
                 status: 0
             }
@@ -123,13 +138,14 @@ Vue.component('note-add', {
             console.log(noteCard)
         }
     },
-    props: {
-        noteOne: {
-            type: Array,
-            required: false
-        }
-    }
+    // props: {
+    //     noteOne: {
+    //         type: Array,
+    //         required: false
+    //     }
+    // }
 })
+
 
 
 
