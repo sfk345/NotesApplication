@@ -240,24 +240,6 @@ Vue.component('columnThree', {
     },
 })
 
-Vue.component('notes', {
-    template: `
-    <div>
-        <h3>{{noteCard.name}}</h3>
-        <ol>
-            <li v-for="t in card.tasks"
-                v-if="t.text != null">
-                @click="t.completed = true, noteCard += 1, changeNote(card)"
-                :class="{completTask: t.completed}">
-                {{t.text}}
-            </li>
-            <p>{{t.date}}</p>
-        </ol>
-    </div>
-    `,
-
-})
-
 
 
 let app = new Vue({
