@@ -1,21 +1,21 @@
 let eventBus = new Vue()
 
-Vue.component('note', {
+Vue.component('notes', {
     template: `
-    <div class="note">
+    <div class="notes">
         <div class="all-notes">
+        <p class="error" v-for="error in errors">{{error}}</p>
             <div class="note-one">
-                <h1>First column</h1>
-                <p class="error" v-for="error in errors">{{error}}</p>
-                <column class="one" :noteOne="noteOne" :noteTwo="noteTwo"></column>
+                <h1>New task</h1>
+                <columnOne class="one" :noteOne="noteOne"></columnOne>
             </div>
             <div class="note-two">
-                <h1>Second column</h1>
-                <column class="two" :noteTwo="noteTwo"></column>
+                <h1>Task in progress</h1>
+                <columnTwo class="two" :noteTwo="noteTwo"></columnTwo>
             </div>
             <div class="note-three">
-                <h1>Third column</h1>
-                <column class="two" :noteThree="noteThree"></column>
+                <h1>Completed tasks</h1>
+                <columnThree class="two" :noteThree="noteThree"></columnThree>
             </div>
         </div>
         <div class="note-add">
@@ -32,32 +32,8 @@ Vue.component('note', {
             errors: []
         }
     },
-    props:{
-        noteCard: {
-            title: {
-                type: Text,
-                required: true
-            },
-            tasks: {
-                type: Array,
-                required: true,
-                completed: {
-                    type: Boolean,
-                    required: true
-                }
-            },
-            date: {
-                type: Date,
-                required: false
-            },
-            status: {
-                type: Number,
-                required: true
-            }
-        }
-    },
     mounted(){
-        eventBus.$on('note-submitted-one', noteCard => {
+        eventBus.$on('firstColumn', noteCard => {
             this.errors = []
             if (this.noteOne.length < 3){
                 this.noteOne.push(noteCard)
@@ -66,11 +42,19 @@ Vue.component('note', {
                 this.errors.push("The quantity noticeably exceeds the permissible norms")
             }
         })
-        eventBus.$on('note-submitted-two', noteCard => {
-            this.noteTwo.push(noteCard)
+        eventBus.$on('secondColumn', noteCard => {
+            if (this.noteTwo.length < 5){
+                this.noteTwo.push(noteCard)
+                this.noteOne.splice(this.noteOne.indexOf(noteCard), 1)
+            }
         })
-        eventBus.$on('note-submitted-three', noteCard => {
+        eventBus.$on('thirdColumn', noteCard => {
             this.noteThree.push(noteCard)
+            this.noteTwo.splice(this.noteTwo.indexOf(noteCard), 1)
+        })
+        eventBus.$on('fromFirstColumnToThird', noteCard => {
+            this.noteThree.push(noteCard)
+            this.noteOne.splice(this.noteOne.indexOf(noteCard), 1)
         })
     },
 })
@@ -147,81 +131,111 @@ Vue.component('note-add', {
     },
 })
 
-Vue.component('note-one', {
+Vue.component('columnOne', {
     template: `
     <div class="column">
-        <div class="card-one" v-for="card in noteOne">
-            <notes :card="card" :changeNote="changeNote" ></notes>
+        <div class="card-one" v-for="n in noteOne">
+        <h3>{{n.name}}</h3>
+            <span>
+                <li v-for="t in n.tasks" v-if="t.text != null">
+                    <input type="checkbox"
+                    v-on:change="t.completed = true"
+                    :disabled="task.completed"
+                    v-on:change="t.status += 1"
+                    @change.prevent="changeCol(n)">
+                    <span :class="{done: t.completed}">{{t.text}}</span>
+                </li>
+            </span>
         </div>
     </div>
     `,
     methods: {
-        changeNote(card) {
+        changeCol(noteCard) {
             let allNotes = 0
             for (let i = 0; i < 5; i++){
-                if (card.tasks[i].text != null){
+                if (noteCard.tasks[i].text != null){
                     allNotes ++
                 }
             }
-            if ((card.status / allNotes) * 100 >= 50 && this.noteTwo.length < 5){
-                eventBus.$emit('addColOne', card)
-                this.noteOne.splice(this.noteOne.indexOf(card), 1)
+            if (((noteCard.status / allNotes) * 100 >= 50) && (noteCard.status / allNotes)){
+                eventBus.$emit('addSecondColumn', noteCard)
+            }
+            if ((noteCard.status / allNotes) * 100 === 100) {
+                noteCard.date = new Date().toLocaleString()
+                eventBus.$emit('addThirdColumn', noteCard)
             }
         }
     },
     props: {
         noteOne: {
-            type: Array
+            type: Array,
+            required: false
         },
-        noteTwo: {
-            type: Array
-        }
     }
 })
 
-Vue.component('note-two', {
+Vue.component('columnTwo', {
     template: `
     <div class="column">
-        <div class="card-one" v-for="card in noteTwo">
-            <notes :card="card" :changeNote="changeNote" ></notes>
+        <div class="card-one" v-for="n in noteTwo">
+        <h3>{{n.name}}</h3>
+            <span>
+                <li v-for="t in n.tasks" v-if="t.text != null">
+                    <input type="checkbox"
+                    v-on:change="t.completed = true"
+                    :disabled="task.completed"
+                    v-on:change="t.status += 1"
+                    @change.prevent="changeColSec(n)">
+                    <span :class="{done: t.completed}">{{t.text}}</span>
+                </li>
+            </span>
         </div>
     </div>
     
     `,
     props:{
         noteTwo: {
-            type: Array
+            type: Array,
+            required: false
         }
     },
     methods: {
-        changeNote(card) {
+        changeColSec(noteCard) {
             let allNotes = 0
             for (let i = 0; i < 5; i++){
-                if (card.tasks[i].text != null){
+                if (noteCard.tasks[i].text != null){
                     allNotes ++
                 }
             }
-            if ((card.status / allNotes) * 100 === 100){
-                eventBus.$emit('addColThree', card)
-                this.noteTwo.splice(this.noteTwo.indexOf(card), 1)
-                card.date = new Date().toLocaleString()
+            if ((noteCard.status / allNotes) * 100 === 100) {
+                noteCard.date = new Date().toLocaleString()
+                eventBus.$emit('addThirdColumn', noteCard)
             }
         }
     },
 
 })
 
-Vue.component('note-three', {
+Vue.component('columnThree', {
     template: `
     <div class="column">
-        <div class="card-one" v-for="card in noteThree">
-            <notes :card="card"></notes>
+        <div class="card-one" v-for="n in noteThree">
+        <h3>{{n.name}}</h3>
+            <span>
+                <li v-for="t in n.tasks" v-if="t.text != null">
+                    <input type="checkbox"
+                    :disabled="task.completed">
+                    <span :class="{done: t.completed}">{{t.text}}</span>
+                </li>
+                <p>Date of the problem solution: {{n.date}}</p>
+            </span>
         </div>
     </div>
     `,
     props:{
         noteThree: {
-            type: Array
+            type: Array,
+            required: false
         }
     },
 })
