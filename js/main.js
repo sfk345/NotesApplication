@@ -6,6 +6,7 @@ Vue.component('note', {
         <div class="all-notes">
             <div class="note-one">
                 <h1>First column</h1>
+                <p class="error" v-for="error in errors">{{error}}</p>
                 <column class="one" :noteOne="noteOne"></column>
             </div>
             <div class="note-two">
