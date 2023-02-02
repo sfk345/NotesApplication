@@ -3,43 +3,36 @@ let eventBus = new Vue()
 Vue.component('notes', {
     template: `
     <div class="notes">
-        <div class="all-notes">
-        <p class="error" v-for="error in errors">{{error}}</p>
-            <div class="note-one">
-                <h1>New task</h1>
-                <columnOne class="one" :noteOne="noteOne"></columnOne>
+    <h1>Notes application</h1>
+        <note-add></note-add>            
+        <div>
+            <div class="note">
+                <h2>New task</h2>
+                <columnOne :noteOne="noteOne"></columnOne>
             </div>
-            <div class="note-two">
-                <h1>Task in progress</h1>
-                <columnTwo class="two" :noteTwo="noteTwo"></columnTwo>
+            <div class="note">
+                <h2>Task in progress</h2>
+                <columnTwo :noteTwo="noteTwo"></columnTwo>
             </div>
-            <div class="note-three">
-                <h1>Completed tasks</h1>
-                <columnThree class="two" :noteThree="noteThree"></columnThree>
+            <div class="note">
+                <h2>Completed tasks</h2>
+                <columnThree :noteThree="noteThree"></columnThree>
             </div>
         </div>
-        <div class="note-add">
-            <note-add></note-add>
-        </div>
-
     </div>
     `,
     data(){
         return{
-            noteOne: [],
-            noteTwo: [],
-            noteThree: [],
-            errors: []
+            noteOne:[],
+            noteTwo:[],
+            noteThree:[],
         }
     },
     mounted(){
         eventBus.$on('firstColumn', noteCard => {
-            this.errors = []
             if (this.noteOne.length < 3){
                 this.noteOne.push(noteCard)
                 console.log(this.noteOne)
-            } else {
-                this.errors.push("The quantity noticeably exceeds the permissible norms")
             }
         })
         eventBus.$on('secondColumn', noteCard => {
@@ -59,101 +52,30 @@ Vue.component('notes', {
     },
 })
 
-Vue.component('note-add', {
-    template: `
-<div>
-    <h1>New add</h1>
-    <form class="note-form" @submit.prevent="onSubmit">
-        <p class="name-column">
-            <label for="name">Name of the note</label>
-            <input id="name" v-model="name" maxlength="50" type="text" placeholder="Text">
-        </p>
-        <p class="name-column">
-            <label for="noteOne">Your first note</label>
-            <input required id="noteOne" v-model="titleOne" maxlength="50" placeholder="Text of the first note">
-        </p>
-        <p class="name-column">
-            <label for="noteTwo">Your second note</label>
-            <input required id="noteTwo" v-model="titleTwo" maxlength="50" placeholder="Text of the second note">
-        </p>
-        <p class="name-column">
-            <label for="noteThree">Your third note</label>
-            <input required id="noteThree" v-model="titleThree" maxlength="50" placeholder="Text of the third note">
-        </p>
-        <p class="name-column">
-            <label for="noteFore">Your fourth note</label>
-            <input id="noteFore" v-model="titleFore" maxlength="50" placeholder="Text of the fourth note">
-        </p>
-        <p class="name-column">
-            <label for="noteFife">Your fifth note</label>
-            <input id="noteFife" v-model="titleFife" maxlength="50" placeholder="Text of the fifth note">
-        </p>
-        <p class="name-column">
-            <input class="btn" type="submit" value="Add">
-        </p>
-    </form>
-</div>
-    `,
-    data(){
-        return{
-            name: null,
-            titleOne: null,
-            titleTwo: null,
-            titleThree: null,
-            titleFore: null,
-            titleFife: null,
-            errors: [],
-
-        }
-
-    },
-    methods: {
-        onSubmit(){
-            let noteCard = {
-                name: this.name,
-                tasks: [{text: this.titleOne, completed: false},
-                    {text: this.titleTwo, completed: false},
-                    {text: this.titleThree, completed: false},
-                    {text: this.titleFore, completed: false},
-                    {text: this.titleFife, completed: false}],
-                date: null,
-                status: 0
-            }
-            eventBus.$emit('note-submitted', noteCard)
-            this.name = null
-            this.titleOne = null
-            this.titleTwo = null
-            this.titleThree = null
-            this.titleFore = null
-            this.titleFife = null
-            console.log(noteCard)
-        }
-    },
-})
 
 Vue.component('columnOne', {
     template: `
     <div class="column">
-        <div class="card-one" v-for="n in noteOne">
-        <h3>{{n.name}}</h3>
+        <div class="card-one" v-for="note in noteOne">
+        <h3>{{note.name}}</h3>
             <span>
-                <li v-for="t in n.tasks" v-if="t.text != null">
+                <li v-for="task in note.arrayTasks" v-if="task.text != null">
+                    <strong>{{task.id}}</strong>
                     <input type="checkbox"
-                    v-on:change="t.completed = true"
+                    v-on:change="task.completed = true"
                     :disabled="task.completed"
-                    v-on:change="t.status += 1"
-                    @change.prevent="changeCol(n)">
-                    <span :class="{done: t.completed}">{{t.text}}</span>
+                    v-on:change="note.status += 1"
+                    @change.prevent="changeCol(note)">
+                    <span :class="{done: task.completed}">{{task.text}}</span>
                 </li>
             </span>
         </div>
-    </div>
-    `,
+    </div>`,
     methods: {
         changeCol(noteCard) {
             let allNotes = 0
             for (let i = 0; i < 5; i++){
-                if (noteCard.tasks[i].text != null){
+                if (noteCard.arrayTasks[i].text != null){
                     allNotes ++
                 }
             }
@@ -170,23 +92,24 @@ Vue.component('columnOne', {
         noteOne: {
             type: Array,
             required: false
-        },
+        }
     }
 })
 
 Vue.component('columnTwo', {
     template: `
     <div class="column">
-        <div class="card-one" v-for="n in noteTwo">
-        <h3>{{n.name}}</h3>
+        <div class="card-one" v-for="note in noteTwo">
+        <h3>{{note.name}}</h3>
             <span>
-                <li v-for="t in n.tasks" v-if="t.text != null">
+                <li v-for="task in note.arrayTasks" v-if="task.text != null">
+                    <strong>{{task.id}}</strong>
                     <input type="checkbox"
-                    v-on:change="t.completed = true"
+                    v-on:change="task.completed = true"
                     :disabled="task.completed"
-                    v-on:change="t.status += 1"
+                    v-on:change='note.status += 1'
                     @change.prevent="changeColSec(n)">
-                    <span :class="{done: t.completed}">{{t.text}}</span>
+                    <span :class="{done: task.completed}">{{task.text}}</span>
                 </li>
             </span>
         </div>
@@ -219,15 +142,16 @@ Vue.component('columnTwo', {
 Vue.component('columnThree', {
     template: `
     <div class="column">
-        <div class="card-one" v-for="n in noteThree">
-        <h3>{{n.name}}</h3>
+        <div class="card-one" v-for="note in noteThree">
+        <h3>{{note.name}}</h3>
             <span>
-                <li v-for="t in n.tasks" v-if="t.text != null">
+                <li v-for="task in note.arrayTasks" v-if="task.text != null">
+                    <strong>{{task.id}}</strong>
                     <input type="checkbox"
                     :disabled="task.completed">
-                    <span :class="{done: t.completed}">{{t.text}}</span>
+                    <span :class="{done: task.completed}">{{task.text}}</span>
                 </li>
-                <p>Date of the problem solution: {{n.date}}</p>
+                <p>Date of the problem solution: {{note.date}}</p>
             </span>
         </div>
     </div>
@@ -240,11 +164,85 @@ Vue.component('columnThree', {
     },
 })
 
+Vue.component('note-add', {
+    template: `
+    <form class="note-form">
+        <div>
+            <h2>New add</h2>
+                <div class="name-column">
+                    <label for="name">Name of the note</label>
+                    <input id="name" v-model="name" maxlength="50" type="text" placeholder="Text">
+                </div>
+                <div class="name-column">
+                    <label for="name">Your note</label>
+                    <input required id="noteOne" v-model="titleOne" maxlength="50" placeholder="Text of the first note">
+                </div>
+                <div class="name-column">
+                    <label for="name">Your note</label>
+                    <input required id="noteTwo" v-model="titleTwo" maxlength="50" placeholder="Text of the second note">
+                </div>
+                <div class="name-column">
+                    <label for="name">Your note</label>
+                    <input required id="noteThree" v-model="titleThree" maxlength="50" placeholder="Text of the third note">
+                </div>
+                <div class="name-column">
+                    <label for="name">Your note</label>
+                    <input id="noteFore" v-model="titleFore" maxlength="50" placeholder="Text of the fourth note">
+                </div>
+                <div class="name-column">
+                    <label for="name">Your note</label>
+                    <input id="noteFife" v-model="titleFife" maxlength="50" placeholder="Text of the fifth note">
+                </div>
+                <input @click="onSubmit" class="btn" type="button" value="Add">
+        </div>
+    </form>
+    `,
+    data(){
+        return{
+            name: null,
+            titleOne: null,
+            titleTwo: null,
+            titleThree: null,
+            titleFore: null,
+            titleFife: null,
+
+        }
+
+    },
+    methods: {
+        onSubmit(){
+            let noteCard = {
+                name: this.name,
+                arrayTasks: [{id: 1, text: this.titleOne, completed: false},
+                    {id: 2, text: this.titleTwo, completed: false},
+                    {id: 3, text: this.titleThree, completed: false},
+                    {id: 4, text: this.titleFore, completed: false},
+                    {id: 5, text: this.titleFife, completed: false}
+                ],
+                date: null,
+                status: 0
+            }
+            eventBus.$emit('note-submitted', noteCard),
+                this.name = null,
+                this.tasks = null,
+                this.titleOne = null,
+                this.titleTwo = null,
+                this.titleThree = null,
+                this.titleFore = null,
+                this.titleFife = null,
+                console.log(noteCard)
+        }
+    },
+    props: {
+        noteOne: {
+            type: Array,
+            required: false
+        }
+    }
+})
 
 
 let app = new Vue({
     el: '#app',
-    data: {
-        name: "Notes application"
-    }
+
 })
