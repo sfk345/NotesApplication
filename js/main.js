@@ -1,46 +1,37 @@
 let eventBus = new Vue()
 
-let app = new Vue({
-    el: '#app',
-    data:{
-
-    }
-})
-
-Vue.component('Notes', {
-    templates: `
-    <div class="Notes">
+Vue.component('note', {
+    template: `
+    <div class="note">
         <div class="all-notes">
             <div class="note-one">
                 <h1>First column</h1>
-                <column class="one" :notesOne="notesOne"></column>
+                <column class="one" :noteOne="noteOne"></column>
             </div>
             <div class="note-two">
                 <h1>Second column</h1>
+                {{noteTwo}}
             </div>
-            <div  class="note-three">
+            <div class="note-three">
                 <h1>Third column</h1>
+                {{noteThree}}
             </div>
         </div>
         <div class="note-add">
-            <Notes-add></Notes-add>
+            <note-add></note-add>
         </div>
+
     </div>
     `,
     data(){
-        return {
+        return{
             noteOne: [],
             noteTwo: [],
             noteThree: [],
-            // noteFore: [],
-            // noteFife: [],
             errors: []
         }
     },
-    methods:{
-
-    },
-    props: {
+    props:{
         noteCard: {
             title: {
                 type: Text,
@@ -53,44 +44,21 @@ Vue.component('Notes', {
         }
     },
     mounted(){
-        eventBus.$on('Notes', noteCard => {
-            if(this.noteOne.length < 3){
+        eventBus.$on('note', noteCard => {
+            this.errors = []
+            if (this.noteOne.length < 3){
                 this.noteOne.push(noteCard)
                 console.log(this.noteOne)
             } else {
                 this.errors.push("The quantity noticeably exceeds the permissible norms")
             }
         })
-    }
+    },
 })
 
-// Vue.component('Notes-tab', {
-//     templates: `
-//     <div>
-//         <ul>
-//             <span class="tab"
-//             :class="{activeTab: selectedtab === tab}"
-//             @click="selectedTab = tab">
-//             {{tab}}
-//             </span>
-//         </ul>
-//     </div>
-//     `,
-//     data() {
-//         return {
-//
-//         }
-//     },
-//     methods: {
-//
-//     },
-//     props: {
-//
-//     }
-// })
-
-Vue.component('Notes-add', {
-    templates: `
+Vue.component('note-add', {
+    template: `
+    <h1>Hello world</h1>
     <form class="note-form" @submit.prevent="onSubmit">
         <p class="name-column>
             <label for="name">Name of the note</label>
@@ -121,8 +89,8 @@ Vue.component('Notes-add', {
         </p>
     </form>
     `,
-    data() {
-        return {
+    data(){
+        return{
             name: null,
             noteOne: null,
             noteTwo: null,
@@ -160,5 +128,15 @@ Vue.component('Notes-add', {
             type: Array,
             required: false
         }
+    }
+})
+
+
+
+
+let app = new Vue({
+    el: '#app',
+    data: {
+        name: "Notes application"
     }
 })
